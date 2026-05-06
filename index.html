@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern task manager application to organize and track your daily tasks.">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Task Manager</h1>
+            <p class="subtitle">Stay organized and productive</p>
+        </header>
+
+        <main>
+            <!-- Add Task Section -->
+            <section class="add-task-section" aria-labelledby="add-task-heading">
+                <h2 id="add-task-heading" class="sr-only">Add a new task</h2>
+                <form id="taskForm" class="task-form">
+                    <div class="form-group">
+                        <label for="taskInput">New Task</label>
+                        <div class="input-wrapper">
+                            <input
+                                type="text"
+                                id="taskInput"
+                                placeholder="What needs to be done?"
+                                required
+                                aria-label="Enter a new task"
+                            >
+                            <button type="submit" class="btn btn-primary">Add Task</button>
+                        </div>
+                    </div>
+                    <div id="formError" class="error-message" role="alert" aria-live="polite"></div>
+                </form>
+            </section>
+
+            <!-- Task Stats -->
+            <section class="task-stats" aria-label="Task statistics">
+                <div class="stat">
+                    <span class="stat-label">Total Tasks:</span>
+                    <span id="totalCount" class="stat-value" aria-label="Total number of tasks">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Completed:</span>
+                    <span id="completedCount" class="stat-value" aria-label="Number of completed tasks">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Pending:</span>
+                    <span id="pendingCount" class="stat-value" aria-label="Number of pending tasks">0</span>
+                </div>
+            </section>
+
+            <!-- Filter Buttons -->
+            <section class="filter-section" aria-label="Filter tasks">
+                <button
+                    type="button"
+                    class="filter-btn active"
+                    data-filter="all"
+                    aria-pressed="true"
+                >
+                    All
+                </button>
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="active"
+                    aria-pressed="false"
+                >
+                    Active
+                </button>
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="completed"
+                    aria-pressed="false"
+                >
+                    Completed
+                </button>
+            </section>
+
+            <!-- Tasks List -->
+            <section class="tasks-section" aria-labelledby="tasks-heading">
+                <h2 id="tasks-heading" class="sr-only">Your tasks</h2>
+                <ul id="taskList" class="task-list" role="list">
+                    <li class="empty-state" role="listitem">
+                        <p>No tasks yet. Add one to get started!</p>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Clear Completed -->
+            <section class="action-section" aria-label="Task actions">
+                <button
+                    id="clearCompleted"
+                    class="btn btn-secondary"
+                    disabled
+                    aria-label="Clear all completed tasks"
+                >
+                    Clear Completed
+                </button>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Task Manager. Built with HTML, CSS, and JavaScript.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
