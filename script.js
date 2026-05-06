@@ -66,7 +66,7 @@ class TaskManager {
         const task = {
             id: Date.now(),
             text: taskText,
-            completed: false,
+            status: 'pending',
             createdAt: new Date().toISOString()
         };
 
@@ -100,11 +100,23 @@ class TaskManager {
     handleToggleComplete(taskId) {
         const task = this.tasks.find(t => t.id === taskId);
         if (task) {
-            task.completed = !task.completed;
+            // Cycle through statuses: pending -> active -> completed -> pending
+            const statusCycle = ['pending', 'active', 'completed'];
+            const currentIndex = statusCycle.indexOf(task.status);
+            task.status = statusCycle[(currentIndex + 1) % statusCycle.length];
             this.saveTasks();
             this.render();
-            const status = task.completed ? 'completed' : 'uncompleted';
-            this.announce(`Task "${task.text}" marked as ${status}`);
+            this.announce(`Task "${task.text}" status changed to ${task.status}`);
+        }
+    }
+
+    handleSetStatus(taskId, newStatus) {
+        const task = this.tasks.find(t => t.id === taskId);
+        if (task) {
+            task.status = newStatus;
+            this.saveTasks();
+            this.render();
+            this.announce(`Task "${task.text}" marked as ${newStatus}`);
         }
     }
 
@@ -120,8 +132,8 @@ class TaskManager {
     }
 
     handleClearCompleted() {
-        const completedCount = this.tasks.filter(t => t.completed).length;
-        this.tasks = this.tasks.filter(t => !t.completed);
+        const completedCount = this.tasks.filter(t => t.status === 'completed').length;
+        this.tasks = this.tasks.filter(t => t.status !== 'completed');
         this.saveTasks();
         this.render();
         this.announce(`${completedCount} completed task(s) cleared`);
@@ -145,10 +157,12 @@ class TaskManager {
 
     getFilteredTasks() {
         switch (this.currentFilter) {
+            case 'pending':
+                return this.tasks.filter(t => t.status === 'pending');
             case 'active':
-                return this.tasks.filter(t => !t.completed);
+                return this.tasks.filter(t => t.status === 'active');
             case 'completed':
-                return this.tasks.filter(t => t.completed);
+                return this.tasks.filter(t => t.status === 'completed');
             default:
                 return this.tasks;
         }
@@ -156,8 +170,9 @@ class TaskManager {
 
     updateStats() {
         const total = this.tasks.length;
-        const completed = this.tasks.filter(t => t.completed).length;
-        const pending = total - completed;
+        const completed = this.tasks.filter(t => t.status === 'completed').length;
+        const pending = this.tasks.filter(t => t.status === 'pending').length;
+        const active = this.tasks.filter(t => t.status === 'active').length;
 
         document.getElementById('totalCount').textContent = total;
         document.getElementById('completedCount').textContent = completed;
@@ -186,7 +201,8 @@ class TaskManager {
 
         // Show empty state for filtered view
         if (filteredTasks.length === 0) {
-            const filterName = this.currentFilter === 'completed' ? 'completed' : 'active';
+            const filterMap = { pending: 'pending', active: 'active', completed: 'completed' };
+            const filterName = filterMap[this.currentFilter] || 'matching';
             taskList.innerHTML = `<li class="empty-state" role="listitem"><p>No ${filterName} tasks.</p></li>`;
             return;
         }
@@ -194,15 +210,28 @@ class TaskManager {
         // Render tasks
         filteredTasks.forEach(task => {
             const li = document.createElement('li');
-            li.className = `task-item${task.completed ? ' completed' : ''}`;
+            li.className = `task-item${task.status === 'completed' ? ' completed' : ''}${task.status === 'active' ? ' active' : ''}`;
             li.setAttribute('role', 'listitem');
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'task-checkbox';
-            checkbox.checked = task.completed;
-            checkbox.setAttribute('aria-label', `Mark "${task.text}" as ${task.completed ? 'incomplete' : 'complete'}`);
-            checkbox.addEventListener('change', () => this.handleToggleComplete(task.id));
+            const statusButton = document.createElement('button');
+            statusButton.type = 'button';
+            statusButton.className = 'status-button';
+            statusButton.setAttribute('aria-label', `Change status for "${task.text}" (Current: ${task.status})`);
+            statusButton.title = 'Click to cycle through status';
+            
+            // Set status button appearance based on current status
+            if (task.status === 'pending') {
+                statusButton.textContent = '○';
+                statusButton.setAttribute('data-status', 'pending');
+            } else if (task.status === 'active') {
+                statusButton.textContent = '◐';
+                statusButton.setAttribute('data-status', 'active');
+            } else if (task.status === 'completed') {
+                statusButton.textContent = '✓';
+                statusButton.setAttribute('data-status', 'completed');
+            }
+            
+            statusButton.addEventListener('click', () => this.handleToggleComplete(task.id));
 
             const textSpan = document.createElement('span');
             textSpan.className = 'task-text';
@@ -220,7 +249,7 @@ class TaskManager {
 
             actionsDiv.appendChild(deleteBtn);
 
-            li.appendChild(checkbox);
+            li.appendChild(statusButton);
             li.appendChild(textSpan);
             li.appendChild(actionsDiv);
 
