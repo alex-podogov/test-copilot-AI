@@ -6,11 +6,13 @@ class TaskManager {
     constructor() {
         this.tasks = [];
         this.currentFilter = 'all';
+        this.darkMode = false;
         this.init();
     }
 
     init() {
         this.loadTasks();
+        this.loadDarkModePreference();
         this.setupEventListeners();
         this.render();
     }
@@ -29,6 +31,10 @@ class TaskManager {
         // Clear completed button
         const clearCompleted = document.getElementById('clearCompleted');
         clearCompleted.addEventListener('click', () => this.handleClearCompleted());
+
+        // Dark mode toggle button
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => this.handleDarkModeToggle());
 
         // Keyboard support for filter buttons
         filterBtns.forEach(btn => {
@@ -275,6 +281,52 @@ class TaskManager {
             this.tasks = [];
         }
     }
+
+    handleDarkModeToggle() {
+        this.darkMode = !this.darkMode;
+        this.applyDarkMode();
+        this.saveDarkModePreference();
+        const toggle = document.getElementById('darkModeToggle');
+        toggle.textContent = this.darkMode ? '☀️' : '🌙';
+        const mode = this.darkMode ? 'dark' : 'light';
+        this.announce(`Dark mode ${mode}`);
+    }
+
+    applyDarkMode() {
+        if (this.darkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+
+    loadDarkModePreference() {
+        try {
+            const saved = localStorage.getItem('darkMode');
+            if (saved !== null) {
+                this.darkMode = JSON.parse(saved);
+            } else {
+                // Check system preference
+                this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            this.applyDarkMode();
+            const toggle = document.getElementById('darkModeToggle');
+            if (toggle) {
+                toggle.textContent = this.darkMode ? '☀️' : '🌙';
+            }
+        } catch (error) {
+            console.error('Failed to load dark mode preference:', error);
+            this.darkMode = false;
+        }
+    }
+
+    saveDarkModePreference() {
+        try {
+            localStorage.setItem('darkMode', JSON.stringify(this.darkMode));
+        } catch (error) {
+            console.error('Failed to save dark mode preference:', error);
+        }
+    }
 }
 
 // Initialize app when DOM is ready
@@ -286,5 +338,6 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('beforeunload', () => {
     if (window.taskManager) {
         window.taskManager.saveTasks();
+        window.taskManager.saveDarkModePreference();
     }
 });

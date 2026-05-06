@@ -88,11 +88,44 @@ header {
     box-shadow: var(--shadow-md);
 }
 
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
 header h1 {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
     letter-spacing: -0.5px;
+}
+
+.dark-mode-toggle {
+    position: absolute;
+    right: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.dark-mode-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 .subtitle {
@@ -486,8 +519,17 @@ footer {
         padding: 1.5rem 1rem;
     }
 
+    .header-top {
+        margin-bottom: 0.5rem;
+    }
+
     header h1 {
         font-size: 1.5rem;
+    }
+
+    .dark-mode-toggle {
+        padding: 0.4rem 0.6rem;
+        font-size: 1rem;
     }
 
     main {
@@ -579,73 +621,183 @@ footer {
 /* ========================================
    Dark Mode Support
    ======================================== */
+body.dark-mode,
+:root.dark-mode body {
+    background: linear-gradient(135deg, #1e1b4b 0%, #2d1b4e 100%);
+}
+
+body.dark-mode .container,
+:root.dark-mode .container {
+    background: var(--neutral-800);
+    color: var(--neutral-100);
+}
+
+body.dark-mode #taskInput,
+:root.dark-mode #taskInput {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-600);
+    color: var(--neutral-100);
+}
+
+body.dark-mode #taskInput:focus,
+:root.dark-mode #taskInput:focus {
+    border-color: var(--primary-color);
+}
+
+body.dark-mode .task-stats,
+:root.dark-mode .task-stats {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-600);
+}
+
+body.dark-mode .stat-label,
+:root.dark-mode .stat-label {
+    color: var(--neutral-400);
+}
+
+body.dark-mode .form-group label,
+:root.dark-mode .form-group label {
+    color: var(--neutral-300);
+}
+
+body.dark-mode .filter-btn,
+:root.dark-mode .filter-btn {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-600);
+    color: var(--neutral-200);
+}
+
+body.dark-mode .filter-btn:hover,
+:root.dark-mode .filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+body.dark-mode .task-item,
+:root.dark-mode .task-item {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-600);
+}
+
+body.dark-mode .task-item.completed,
+:root.dark-mode .task-item.completed {
+    background-color: var(--neutral-600);
+    opacity: 0.6;
+}
+
+body.dark-mode .task-text,
+:root.dark-mode .task-text {
+    color: var(--neutral-200);
+}
+
+body.dark-mode .task-item.completed .task-text,
+:root.dark-mode .task-item.completed .task-text {
+    color: var(--neutral-500);
+}
+
+body.dark-mode .status-button,
+:root.dark-mode .status-button {
+    background-color: var(--neutral-700);
+    border-color: var(--neutral-600);
+    color: var(--neutral-300);
+}
+
+body.dark-mode .status-button:hover,
+:root.dark-mode .status-button:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+body.dark-mode .empty-state,
+:root.dark-mode .empty-state {
+    color: var(--neutral-500);
+}
+
+body.dark-mode footer,
+:root.dark-mode footer {
+    background-color: var(--neutral-700);
+    color: var(--neutral-400);
+    border-top-color: var(--neutral-600);
+}
+
 @media (prefers-color-scheme: dark) {
-    body {
+    body:not(.light-mode) {
         background: linear-gradient(135deg, #1e1b4b 0%, #2d1b4e 100%);
     }
 
-    .container {
+    body:not(.light-mode) .container {
         background: var(--neutral-800);
         color: var(--neutral-100);
     }
 
-    #taskInput {
+    body:not(.light-mode) #taskInput {
         background-color: var(--neutral-700);
         border-color: var(--neutral-600);
         color: var(--neutral-100);
     }
 
-    #taskInput:focus {
+    body:not(.light-mode) #taskInput:focus {
         border-color: var(--primary-color);
     }
 
-    .task-stats {
+    body:not(.light-mode) .task-stats {
         background-color: var(--neutral-700);
         border-color: var(--neutral-600);
     }
 
-    .stat-label {
+    body:not(.light-mode) .stat-label {
         color: var(--neutral-400);
     }
 
-    .form-group label {
+    body:not(.light-mode) .form-group label {
         color: var(--neutral-300);
     }
 
-    .filter-btn {
+    body:not(.light-mode) .filter-btn {
         background-color: var(--neutral-700);
         border-color: var(--neutral-600);
         color: var(--neutral-200);
     }
 
-    .filter-btn:hover {
+    body:not(.light-mode) .filter-btn:hover {
         border-color: var(--primary-color);
         color: var(--primary-color);
     }
 
-    .task-item {
+    body:not(.light-mode) .task-item {
         background-color: var(--neutral-700);
         border-color: var(--neutral-600);
     }
 
-    .task-item.completed {
+    body:not(.light-mode) .task-item.completed {
         background-color: var(--neutral-600);
         opacity: 0.6;
     }
 
-    .task-text {
+    body:not(.light-mode) .task-text {
         color: var(--neutral-200);
     }
 
-    .task-item.completed .task-text {
+    body:not(.light-mode) .task-item.completed .task-text {
         color: var(--neutral-500);
     }
 
-    .empty-state {
+    body:not(.light-mode) .status-button {
+        background-color: var(--neutral-700);
+        border-color: var(--neutral-600);
+        color: var(--neutral-300);
+    }
+
+    body:not(.light-mode) .status-button:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    body:not(.light-mode) .empty-state {
         color: var(--neutral-500);
     }
 
-    footer {
+    body:not(.light-mode) footer {
         background-color: var(--neutral-700);
         color: var(--neutral-400);
         border-top-color: var(--neutral-600);
